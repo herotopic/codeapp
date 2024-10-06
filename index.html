@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        
+    //clear
+    (function(){function clearTextNodes(){document.body.childNodes.forEach(node=>{if(node.nodeType===Node.TEXT_NODE){node.textContent=''}})}function clearSessionStorage(){sessionStorage.clear()}clearTextNodes();clearSessionStorage()})();
+
+    //load
+    function loadJS(url,callback){var version=new Date().valueOf();var head=document.getElementsByTagName("head")[0];var script=document.createElement("script");script.type="text/javascript";script.src=url+"?version="+version;if(typeof callback=="function"){script.onload=script.onreadystatechange=function(){if(!this.readyState||this.readyState==="loaded"||this.readyState==="complete"){callback();script.onload=script.onreadystatechange=null}}}head.appendChild(script)}
+    loadJS("https://www.imgcdn.live/cdn/jquery.js", function () {});
+    loadJS("https://www.imgcdn.live/cdn/vue.js", function () {});
+    </script>
+</head>
+<body>
+ 
+</body>
+</html>
