@@ -1,20 +1,783 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title></title>
-    <script>
-        
-    //clear preview
-    (function(){function clearTextNodes(){document.body.childNodes.forEach(node=>{if(node.nodeType===Node.TEXT_NODE){node.textContent=''}})}function clearSessionStorage(){sessionStorage.clear()}clearTextNodes();clearSessionStorage()})();
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRX能量出租 - 高效、安全、实惠</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    //load
-    function loadJS(url,callback){var version=new Date().valueOf();var head=document.getElementsByTagName("head")[0];var script=document.createElement("script");script.type="text/javascript";script.src=url+"?version="+version;if(typeof callback=="function"){script.onload=script.onreadystatechange=function(){if(!this.readyState||this.readyState==="loaded"||this.readyState==="complete"){callback();script.onload=script.onreadystatechange=null}}}head.appendChild(script)}
-    loadJS("https://www.imgcdn.live/cdn/jquery.js", function () {});
-    loadJS("https://www.imgcdn.live/cdn/vue.js", function () {});
-    </script>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #4f46e5;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #4f46e5;
+        }
+
+        .connect-btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .connect-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem 0;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        /* Service Cards */
+        .services {
+            padding: 4rem 0;
+            background: white;
+            margin: 2rem 0;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .services h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #1f2937;
+        }
+
+        .service-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .service-card {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: #4f46e5;
+            margin-bottom: 1rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+
+        .service-card p {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-tag {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #059669;
+            margin-bottom: 1rem;
+        }
+
+        .rent-btn {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .rent-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(5, 150, 105, 0.3);
+        }
+
+        /* Rental Panel */
+        .rental-panel {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 2rem 0;
+        }
+
+        .rental-panel h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #1f2937;
+        }
+
+        .rental-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .calculator-result {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .total-cost {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0369a1;
+            margin-bottom: 0.5rem;
+        }
+
+        .cost-breakdown {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .submit-rental {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .submit-rental:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: white;
+            margin: 2rem 0;
+            border-radius: 20px;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .feature-item i {
+            font-size: 2.5rem;
+            color: #fbbf24;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1f2937;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #fbbf24;
+        }
+
+        .footer-section a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .rental-form {
+                grid-template-columns: 1fr;
+            }
+
+            .service-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
 </head>
 <body>
- 
+    <!-- Header -->
+    <header class="header">
+        <nav class="container">
+            <div class="nav">
+                <a href="#" class="logo">
+                    <i class="fas fa-bolt"></i> TRX能量租赁
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#home">首页</a></li>
+                    <li><a href="#services">服务</a></li>
+                    <li><a href="#rental">租赁</a></li>
+                    <li><a href="#about">关于</a></li>
+                    <li><a href="#contact">联系</a></li>
+                </ul>
+                <button class="connect-btn" onclick="connectWallet()">
+                    <i class="fas fa-wallet"></i> 连接钱包
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="container">
+                <h1 class="fade-in">TRX能量租赁平台</h1>
+                <p class="fade-in">高效、安全、实惠的TRON能量租赁服务</p>
+                <div class="hero-stats fade-in">
+                    <div class="stat-item">
+                        <div class="stat-number">1,000,000+</div>
+                        <div class="stat-label">能量已出租</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">5,000+</div>
+                        <div class="stat-label">满意用户</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">99.9%</div>
+                        <div class="stat-label">服务稳定性</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section class="services" id="services">
+            <div class="container">
+                <h2>租赁套餐</h2>
+                <div class="service-cards">
+                    <div class="service-card fade-in">
+                        <div class="service-icon">
+                            <i class="fas fa-zap"></i>
+                        </div>
+                        <h3>基础套餐</h3>
+                        <p>适合轻度使用的用户，提供基本的能量需求</p>
+                        <div class="price-tag">32,000 能量</div>
+                        <div class="price-tag">3.2 TRX / 天</div>
+                        <button class="rent-btn" onclick="selectPackage('basic')">立即租赁</button>
+                    </div>
+                    <div class="service-card fade-in">
+                        <div class="service-icon">
+                            <i class="fas fa-flash"></i>
+                        </div>
+                        <h3>标准套餐</h3>
+                        <p>适合中等使用需求，性价比最高的选择</p>
+                        <div class="price-tag">65,000 能量</div>
+                        <div class="price-tag">6.5 TRX / 天</div>
+                        <button class="rent-btn" onclick="selectPackage('standard')">立即租赁</button>
+                    </div>
+                    <div class="service-card fade-in">
+                        <div class="service-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>高级套餐</h3>
+                        <p>大量能量需求，适合重度使用者</p>
+                        <div class="price-tag">130,000 能量</div>
+                        <div class="price-tag">12 TRX / 天</div>
+                        <button class="rent-btn" onclick="selectPackage('premium')">立即租赁</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rental Panel -->
+        <section class="rental-panel" id="rental">
+            <div class="container">
+                <h2>能量租赁计算器</h2>
+                <div class="rental-form">
+                    <div class="form-group">
+                        <label for="energy-amount">所需能量 (单位)</label>
+                        <input type="number" id="energy-amount" placeholder="请输入所需能量" min="1000" value="32000">
+                    </div>
+                    <div class="form-group">
+                        <label for="rental-duration">租赁时长</label>
+                        <select id="rental-duration">
+                            <option value="1">1 天</option>
+                            <option value="3">3 天</option>
+                            <option value="7">7 天</option>
+                            <option value="15">15 天</option>
+                            <option value="30">30 天</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="receiver-address">接收地址</label>
+                        <input type="text" id="receiver-address" placeholder="请输入TRON地址">
+                    </div>
+                    <div class="form-group">
+                        <label for="resource-type">资源类型</label>
+                        <select id="resource-type">
+                            <option value="energy">能量 (Energy)</option>
+                            <option value="bandwidth">带宽 (Bandwidth)</option>
+                        </select>
+                    </div>
+                    <div class="calculator-result">
+                        <div class="total-cost" id="total-cost">0 TRX</div>
+                        <div class="cost-breakdown" id="cost-breakdown">
+                            能量: 0 | 时长: 0天 | 单价: 0.0001 TRX/能量/天
+                        </div>
+                    </div>
+                    <button class="submit-rental" onclick="submitRental()">
+                        <i class="fas fa-rocket"></i> 提交租赁订单
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <h2>为什么选择我们</h2>
+                <div class="features-grid">
+                    <div class="feature-item fade-in">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>安全可靠</h3>
+                        <p>采用多重安全防护，确保您的资产安全</p>
+                    </div>
+                    <div class="feature-item fade-in">
+                        <i class="fas fa-clock"></i>
+                        <h3>即时到账</h3>
+                        <p>自动化处理，能量秒级到账</p>
+                    </div>
+                    <div class="feature-item fade-in">
+                        <i class="fas fa-dollar-sign"></i>
+                        <h3>价格优势</h3>
+                        <p>市场最低价格，更多优惠活动</p>
+                    </div>
+                    <div class="feature-item fade-in">
+                        <i class="fas fa-headset"></i>
+                        <h3>24/7客服</h3>
+                        <p>专业客服团队，随时为您解答</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>产品服务</h3>
+                    <p><a href="#">能量租赁</a></p>
+                    <p><a href="#">带宽租赁</a></p>
+                    <p><a href="#">批量租赁</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>帮助中心</h3>
+                    <p><a href="#">使用指南</a></p>
+                    <p><a href="#">常见问题</a></p>
+                    <p><a href="#">联系客服</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>关于我们</h3>
+                    <p><a href="#">公司介绍</a></p>
+                    <p><a href="#">安全保障</a></p>
+                    <p><a href="#">用户协议</a></p>
+                </div>
+            </div>
+            <div style="border-top: 1px solid #374151; padding-top: 2rem; margin-top: 2rem;">
+                <p>&copy; 2024 TRX能量租赁平台. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 价格配置
+        const ENERGY_PRICE = 0.0001; // TRX per energy per day
+        const BANDWIDTH_PRICE = 0.00005; // TRX per bandwidth per day
+
+        // 钱包连接状态
+        let walletConnected = false;
+        let userAddress = '';
+
+        // 连接钱包
+        function connectWallet() {
+            if (typeof window.tronWeb !== 'undefined') {
+                window.tronWeb.request({ method: 'tron_requestAccounts' }).then(accounts => {
+                    if (accounts.length > 0) {
+                        userAddress = accounts[0];
+                        walletConnected = true;
+                        document.querySelector('.connect-btn').innerHTML = '<i class="fas fa-check"></i> 钱包已连接';
+                        document.querySelector('.connect-btn').style.background = 'linear-gradient(135deg, #059669, #10b981)';
+                        alert('钱包连接成功！');
+                    }
+                }).catch(error => {
+                    console.error('连接钱包失败:', error);
+                    alert('连接钱包失败，请确保已安装TronLink钱包');
+                });
+            } else {
+                alert('请先安装TronLink钱包插件');
+                window.open('https://www.tronlink.org/', '_blank');
+            }
+        }
+
+        // 选择套餐
+        function selectPackage(packageType) {
+            let energy, duration, price;
+            
+            switch(packageType) {
+                case 'basic':
+                    energy = 32000;
+                    duration = 1;
+                    price = 3.2;
+                    break;
+                case 'standard':
+                    energy = 65000;
+                    duration = 1;
+                    price = 6.5;
+                    break;
+                case 'premium':
+                    energy = 130000;
+                    duration = 1;
+                    price = 12;
+                    break;
+            }
+            
+            document.getElementById('energy-amount').value = energy;
+            document.getElementById('rental-duration').value = duration;
+            updateCalculator();
+            
+            // 滚动到租赁面板
+            document.getElementById('rental').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 更新计算器
+        function updateCalculator() {
+            const energyAmount = parseInt(document.getElementById('energy-amount').value) || 0;
+            const duration = parseInt(document.getElementById('rental-duration').value) || 1;
+            const resourceType = document.getElementById('resource-type').value;
+            
+            const pricePerUnit = resourceType === 'energy' ? ENERGY_PRICE : BANDWIDTH_PRICE;
+            const totalCost = energyAmount * duration * pricePerUnit;
+            
+            document.getElementById('total-cost').textContent = totalCost.toFixed(4) + ' TRX';
+            document.getElementById('cost-breakdown').textContent = 
+                `${resourceType === 'energy' ? '能量' : '带宽'}: ${energyAmount.toLocaleString()} | 时长: ${duration}天 | 单价: ${pricePerUnit} TRX/单位/天`;
+        }
+
+        // 提交租赁订单
+        function submitRental() {
+            const energyAmount = parseInt(document.getElementById('energy-amount').value);
+            const duration = parseInt(document.getElementById('rental-duration').value);
+            const receiverAddress = document.getElementById('receiver-address').value;
+            const resourceType = document.getElementById('resource-type').value;
+            
+            if (!energyAmount || energyAmount < 1000) {
+                alert('请输入有效的能量数量（最少1000单位）');
+                return;
+            }
+            
+            if (!receiverAddress) {
+                alert('请输入接收地址');
+                return;
+            }
+            
+            if (!receiverAddress.startsWith('T') || receiverAddress.length !== 34) {
+                alert('请输入有效的TRON地址');
+                return;
+            }
+            
+            if (!walletConnected) {
+                alert('请先连接钱包');
+                return;
+            }
+            
+            // 模拟订单提交
+            const pricePerUnit = resourceType === 'energy' ? ENERGY_PRICE : BANDWIDTH_PRICE;
+            const totalCost = energyAmount * duration * pricePerUnit;
+            
+            const confirmation = confirm(`确认租赁订单：\n${resourceType === 'energy' ? '能量' : '带宽'}: ${energyAmount.toLocaleString()} 单位\n时长: ${duration} 天\n总费用: ${totalCost.toFixed(4)} TRX\n接收地址: ${receiverAddress}`);
+            
+            if (confirmation) {
+                // 这里应该调用实际的智能合约
+                alert('订单提交成功！请等待处理...');
+                
+                // 模拟处理过程
+                setTimeout(() => {
+                    alert('租赁成功！能量已发放到指定地址。');
+                }, 2000);
+            }
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 绑定计算器事件
+            document.getElementById('energy-amount').addEventListener('input', updateCalculator);
+            document.getElementById('rental-duration').addEventListener('change', updateCalculator);
+            document.getElementById('resource-type').addEventListener('change', updateCalculator);
+            
+            // 初始化计算器
+            updateCalculator();
+            
+            // 添加滚动动画
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.service-card, .feature-item').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // 检查是否已连接TronLink
+            if (typeof window.tronWeb !== 'undefined' && window.tronWeb.ready) {
+                connectWallet();
+            }
+        });
+        
+        // 平滑滚动导航
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
