@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SOL 实时价格（USDT）</title>
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#0e1633;
+      --card:#121a33cc;
+      --card2:#0f1730cc;
+      --text:#e8ecff;
+      --muted:#a9b2d6;
+      --good:#28d17c;
+      --bad:#ff5c7a;
+      --accent:#6d7cff;
+      --accent2:#00d4ff;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 700px at 20% 20%, rgba(109,124,255,.25), transparent 60%),
+        radial-gradient(900px 500px at 80% 30%, rgba(0,212,255,.18), transparent 55%),
+        radial-gradient(800px 600px at 50% 85%, rgba(40,209,124,.14), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px 16px;
+    }
+
+    .wrap{ width:min(980px, 100%); }
+
+    header{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      margin-bottom:16px;
+    }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    h1{
+      margin:0;
+      font-size:22px;
+      letter-spacing:.2px;
+    }
+
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    .dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:#999;
+      box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+    }
+
+    .dot.ok{ background: var(--good); }
+    .dot.bad{ background: var(--bad); }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.4fr .6fr;
+      gap:14px;
+    }
+
+    @media (max-width:860px){
+      .grid{ grid-template-columns: 1fr; }
+      header{ flex-direction:column; align-items:stretch; }
+      .pill{ justify-content:center; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .hero{
+      padding:18px 18px 16px;
+      position:relative;
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(500px 180px at 20% 0%, rgba(109,124,255,.32), transparent 60%),
+        radial-gradient(420px 160px at 85% 10%, rgba(0,212,255,.24), transparent 58%);
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    .hero > *{ position:relative; }
+
+    .tokenRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+
+    .token{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .logo{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      background:
+        linear-gradient(135deg, rgba(0,212,255,.35), rgba(109,124,255,.35)),
+        radial-gradient(20px 20px at 30% 30%, rgba(255,255,255,.35), transparent 65%);
+      border:1px solid rgba(255,255,255,.15);
+      box-shadow: 0 12px 28px rgba(0,0,0,.25);
+      display:grid;
+      place-items:center;
+      font-weight:700;
+      letter-spacing:.3px;
+    }
+
+    .tokenName{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+
+    .tokenName .sym{
+      font-size:14px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .tokenName .name{
+      font-size:18px;
+      font-weight:650;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .price{
+      text-align:right;
+      min-width: 220px;
+    }
+
+    .price .value{
+      font-size:34px;
+      font-weight:750;
+      letter-spacing:.2px;
+      line-height:1.1;
+    }
+
+    .price .unit{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:6px;
+      font-family:var(--mono);
+    }
+
+    .divider{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin:14px 0;
+    }
+
+    .meta{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+    }
+
+    @media (max-width:560px){
+      .meta{ grid-template-columns: 1fr; }
+      .price{ min-width: 0; }
+      .price .value{ font-size:30px; }
+    }
+
+    .stat{
+      padding:12px 12px;
+      border-radius:14px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+    }
+
+    .stat .k{
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .stat .v{
+      font-size:16px;
+      font-weight:650;
+      font-family:var(--mono);
+    }
+
+    .chg.good{ color:var(--good); }
+    .chg.bad{ color:var(--bad); }
+
+    .side{
+      padding:16px;
+    }
+
+    .side h2{
+      margin:0 0 10px;
+      font-size:14px;
+      color:var(--muted);
+      font-weight:650;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    button{
+      appearance:none;
+      border:none;
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(109,124,255,.18);
+      color: var(--text);
+      border: 1px solid rgba(109,124,255,.35);
+      cursor:pointer;
+      font-weight:650;
+      font-size:13px;
+    }
+
+    button.secondary{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--muted);
+      font-weight:600;
+    }
+
+    button:hover{ filter: brightness(1.08); }
+
+    .foot{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    a{ color: #b9c2ff; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .err{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(255,92,122,.12);
+      border: 1px solid rgba(255,92,122,.25);
+      color: #ffd6de;
+      font-size:12px;
+      display:none;
+    }
+
+    .spinner{
+      display:inline-block;
+      width:12px;
+      height:12px;
+      border:2px solid rgba(255,255,255,.18);
+      border-top-color: rgba(0,212,255,.65);
+      border-radius:50%;
+      animation: spin 1s linear infinite;
+      vertical-align:-2px;
+      margin-right:8px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .kbd{ font-family: var(--mono); font-size: 12px; padding:2px 6px; border-radius: 8px; background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>SOL 实时价格</h1>
+        <p class="subtitle">通过 <a href="https://www.binance.com/" target="_blank" rel="noreferrer">Binance 公共接口</a> 获取 Solana（$SOL）对 USDT 的实时价格与 24H 数据（无需授权，支持跨域）。自动刷新，也支持手动刷新。</p>
+      </div>
+      <div class="pill" id="statusPill" title="连接状态">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">等待获取…</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hero">
+          <div class="tokenRow">
+            <div class="token">
+              <div class="logo">SOL</div>
+              <div class="tokenName">
+                <div class="name">Solana</div>
+                <div class="sym">代币：$SOL · 报价单位：USDT</div>
+              </div>
+            </div>
+            <div class="price">
+              <div class="value" id="price">--</div>
+              <div class="unit" id="updated">上次更新：--</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="meta">
+            <div class="stat">
+              <div class="k">24H 涨跌幅</div>
+              <div class="v"><span id="change" class="chg">--</span></div>
+            </div>
+            <div class="stat">
+              <div class="k">24H 最高</div>
+              <div class="v" id="high">--</div>
+            </div>
+            <div class="stat">
+              <div class="k">24H 最低</div>
+              <div class="v" id="low">--</div>
+            </div>
+          </div>
+
+          <div class="err" id="errBox"></div>
+        </div>
+      </section>
+
+      <aside class="card side">
+        <h2>操作</h2>
+        <div class="btnRow">
+          <button id="refreshBtn"><span id="refreshIcon"></span>立即刷新</button>
+          <button class="secondary" id="toggleBtn">暂停自动刷新</button>
+        </div>
+        <div class="foot">
+          <div>自动刷新间隔：<span class="kbd" id="interval">15s</span></div>
+          <div>数据接口：<span class="kbd">/api/v3/ticker/24hr</span></div>
+          <div style="margin-top:10px;">提示：如果你在某些网络环境下访问失败，可能是被网络/浏览器拦截。可以稍后重试或切换网络。</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // 免费接口：Binance 公共行情（支持跨域，无需授权）
+    // 文档： https://binance-docs.github.io/apidocs/spot/en/#24hr-ticker-price-change-statistics
+    // 这里用 24hr ticker 拿：最新价、24h 涨跌幅、24h 高低、更新时间。
+    const API = "https://api.binance.com/api/v3/ticker/24hr?symbol=SOLUSDT";
+
+    const el = {
+      price: document.getElementById('price'),
+      change: document.getElementById('change'),
+      high: document.getElementById('high'),
+      low: document.getElementById('low'),
+      updated: document.getElementById('updated'),
+      statusDot: document.getElementById('statusDot'),
+      statusText: document.getElementById('statusText'),
+      errBox: document.getElementById('errBox'),
+      refreshBtn: document.getElementById('refreshBtn'),
+      toggleBtn: document.getElementById('toggleBtn'),
+      refreshIcon: document.getElementById('refreshIcon'),
+    };
+
+    const fmt = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 4 });
+    const fmt2 = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 2 });
+
+    const refreshMs = 15000;
+    let timer = null;
+    let running = true;
+
+    function setStatus(ok, text){
+      el.statusDot.classList.remove('ok','bad');
+      if (ok === true) el.statusDot.classList.add('ok');
+      if (ok === false) el.statusDot.classList.add('bad');
+      el.statusText.textContent = text;
+    }
+
+    function showError(msg){
+      el.errBox.style.display = 'block';
+      el.errBox.textContent = msg;
+    }
+
+    function clearError(){
+      el.errBox.style.display = 'none';
+      el.errBox.textContent = '';
+    }
+
+    function setLoading(isLoading){
+      if (isLoading){
+        el.refreshIcon.innerHTML = '<span class="spinner"></span>';
+        el.refreshBtn.disabled = true;
+      } else {
+        el.refreshIcon.textContent = '';
+        el.refreshBtn.disabled = false;
+      }
+    }
+
+    async function fetchPrice(){
+      setLoading(true);
+      clearError();
+      setStatus(null, '获取中…');
+
+      try {
+        const res = await fetch(API, {
+          method: 'GET',
+          headers: { 'accept': 'application/json' },
+          cache: 'no-store'
+        });
+
+        if (!res.ok){
+          throw new Error(`HTTP ${res.status} ${res.statusText}`);
+        }
+
+        const row = await res.json();
+        if (!row) throw new Error('接口返回为空');
+
+        // Binance 返回字段：lastPrice / priceChangePercent / highPrice / lowPrice / closeTime
+        const price = row.lastPrice != null ? Number(row.lastPrice) : null;
+        const chg = row.priceChangePercent != null ? Number(row.priceChangePercent) : null;
+        const high = row.highPrice != null ? Number(row.highPrice) : null;
+        const low = row.lowPrice != null ? Number(row.lowPrice) : null;
+        const t = row.closeTime ? new Date(Number(row.closeTime)) : new Date();
+
+        el.price.textContent = price == null ? '--' : `${fmt.format(price)}`;
+
+        if (chg == null){
+          el.change.textContent = '--';
+          el.change.classList.remove('good','bad');
+        } else {
+          const sign = chg >= 0 ? '+' : '';
+          el.change.textContent = `${sign}${fmt2.format(chg)}%`;
+          el.change.classList.remove('good','bad');
+          el.change.classList.add(chg >= 0 ? 'good' : 'bad');
+        }
+
+        el.high.textContent = high == null ? '--' : fmt.format(high);
+        el.low.textContent = low == null ? '--' : fmt.format(low);
+
+        el.updated.textContent = `上次更新：${t.toLocaleString('zh-CN', { hour12:false })}`;
+        setStatus(true, '已连接 · 数据已更新');
+      } catch (e){
+        setStatus(false, '连接失败');
+        showError(`获取失败：${e?.message || e}\n\n如果持续失败：可能是网络限制 / 接口临时异常。建议稍等 30-60 秒再试，或切换网络后重试。`);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function startAuto(){
+      if (timer) clearInterval(timer);
+      timer = setInterval(fetchPrice, refreshMs);
+      running = true;
+      el.toggleBtn.textContent = '暂停自动刷新';
+    }
+
+    function stopAuto(){
+      if (timer) clearInterval(timer);
+      timer = null;
+      running = false;
+      el.toggleBtn.textContent = '恢复自动刷新';
+    }
+
+    el.refreshBtn.addEventListener('click', fetchPrice);
+    el.toggleBtn.addEventListener('click', () => {
+      if (running) stopAuto();
+      else startAuto();
+    });
+
+    // 首次加载
+    fetchPrice();
+    startAuto();
+  </script>
+</body>
+</html>
